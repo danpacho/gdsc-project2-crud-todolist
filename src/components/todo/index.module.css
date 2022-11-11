@@ -1,0 +1,162 @@
+.form {
+    width: 100%;
+    -webkit-user-select: none;
+    user-select: none;
+
+    background: transparent;
+    color: whitesmoke;
+    outline: none;
+}
+.form:focus {
+    border: none;
+}
+
+.input {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    border: 0.1rem solid wheat;
+
+    background: transparent;
+    color: whitesmoke;
+    outline: none;
+}
+
+.input::placeholder {
+    color: wheat;
+}
+
+.input:focus {
+    border: 0.1rem solid wheat;
+}
+
+.listFocused {
+    background-color: beige;
+    border: 0.1rem solid bisque;
+}
+
+.listContainerCol {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.listContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    gap: 0;
+}
+
+.todoContainer {
+    width: 100%;
+    border-left: 0.1rem solid wheat;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0.25rem;
+    border-radius: 0 1.5px 1.5px 0;
+
+    transition: background-color ease 0.2s;
+}
+
+.todoControllContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.todoActiveContainer {
+    background-color: rgb(245, 222, 179, 0.1);
+}
+
+.todoActionContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0.25rem;
+
+    background: transparent;
+}
+
+.todoText {
+    margin: 0 0.5rem;
+    background-color: transparent;
+    transition: all ease 0.2s;
+    padding-bottom: 0.1rem;
+    border-bottom: 0.1rem solid transparent;
+
+    max-width: 50%;
+
+    -webkit-user-select: none;
+    user-select: none;
+}
+@media (min-width: 568px) {
+    .todoText {
+        max-width: 65%;
+    }
+}
+@media (min-width: 1024px) {
+    .todoText {
+        max-width: 70%;
+    }
+}
+
+.todoTextFocused {
+    border-bottom-color: wheat;
+}
+
+.todoTotalStateContainer {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.todoStateContainer {
+    display: none;
+    flex-direction: row;
+    gap: 0.5rem;
+
+    -webkit-user-select: none;
+    user-select: none;
+}
+.todoStateContainer > span {
+    border-bottom: 0.1rem solid wheat;
+}
+@media (min-width: 568px) {
+    .todoStateContainer {
+        display: flex;
+    }
+}
+
+.removed:hover {
+    border-color: rgba(255, 30, 113, 0.5);
+    background-color: rgba(255, 30, 113, 0.5);
+}
+
+.focused {
+    border-color: rgb(245, 222, 179, 0.5);
+    background-color: rgb(245, 222, 179, 0.25);
+}
+
+.completed {
+    border-color: rgba(71, 255, 203, 0.5);
+    background-color: rgba(71, 255, 203, 0.25);
+}
