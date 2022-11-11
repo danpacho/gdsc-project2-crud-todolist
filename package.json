@@ -1,0 +1,32 @@
+{
+    "name": "vanilla-ts-template",
+    "private": true,
+    "version": "0.0.0",
+    "author": "danpacho",
+    "type": "module",
+    "scripts": {
+        "vite:dev": "vite",
+        "vite:build": "tsc && vite build",
+        "vite:preview": "vite preview",
+        "lint": "eslint '**/*.js'",
+        "prettier": "prettier '**/*.{js,json,md}' --check",
+        "prettier:fix": "prettier **/*.{js,json,md}' --write",
+        "pre-commit": "lint-staged",
+        "prepare": "husky install"
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^5.42.1",
+        "@typescript-eslint/parser": "^5.42.1",
+        "eslint": "^8.27.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "gitmoji-cli": "^7.0.2",
+        "husky": "^8.0.2",
+        "lint-staged": "^13.0.3",
+        "prettier": "^2.7.1",
+        "typescript": "^4.8.4",
+        "typescript-plugin-css-modules": "^3.4.0",
+        "vite": "^3.2.3"
+    }
+}
