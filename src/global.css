@@ -1,0 +1,15 @@
+* {
+    background-color: rgb(34, 34, 34);
+    color: whitesmoke;
+    font-family: "Noto Sans KR", "Space Grotesk", sans-serif;
+    font-weight: 300;
+}
+
+*::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+
+*::selection {
+    background: wheat;
+    color: black;
+}
