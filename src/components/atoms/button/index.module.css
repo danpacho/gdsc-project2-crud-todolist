@@ -1,0 +1,37 @@
+.btn {
+    display: flex;
+    flex-direction: row;
+
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+
+    font-size: 1rem;
+
+    border: 1px solid rgb(102, 102, 102);
+    background-color: rgb(32, 32, 32);
+    border-radius: 3.5px;
+
+    padding: 0.25rem 0.5rem;
+
+    -webkit-user-select: none;
+    user-select: none;
+
+    transition: all ease 0.1s;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn > span {
+    background-color: transparent;
+    pointer-events: none;
+}
