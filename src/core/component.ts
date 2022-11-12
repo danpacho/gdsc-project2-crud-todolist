@@ -31,13 +31,7 @@ class Component extends EventListener {
     id: string
     template: HTMLSetter
 
-    constructor({
-        template,
-        renderTargetID,
-    }: {
-        template: HTMLSetter
-        renderTargetID?: string | undefined
-    }) {
+    constructor({ template }: { template: HTMLSetter }) {
         const id = window.crypto.randomUUID()
         const { fragment } = createFragment(template, id)
 
@@ -48,8 +42,6 @@ class Component extends EventListener {
 
         this.id = id
         this.template = template
-
-        if (renderTargetID) this.#updateRenderTargetID(renderTargetID)
     }
 
     #updateRenderTargetID(newID: string) {
@@ -127,14 +119,6 @@ class Component extends EventListener {
      */
     ref() {
         return this.#ref
-    }
-
-    /**
-     * Get static `HTML` component.
-     * @note Use it to mount static components to the `DOM` tree.
-     */
-    staticRender(renderTargetID?: string) {
-        this.#mount(renderTargetID)
     }
 }
 
