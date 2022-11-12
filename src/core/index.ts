@@ -104,6 +104,16 @@ const signal = <T>(data: T): SignalAction<T> => {
 
     return [getState, setState, resetState, getPreviousState]
 }
+const derivedSignal = <T>(deriveLogic: () => T) => {
+    track(() => {
+        deriveLogic()
+    })
+    //!TODO: make derived signal with automatic tracking
+
+    const getState: Getter<T> = () => deriveLogic()
+
+    return getState
+}
 
 // ------------------------ component ------------------------
 export type HTMLSetter = () => string
@@ -124,20 +134,13 @@ const html = (
 }
 
 /**
- * Component class wrapper function
+ * Reactive component class wrapper function
  * @param htmlSetter `html` template function
- * @param option `renderTargetID` and `isStatic` option included
  */
-const component = (
-    htmlSetter: HTMLSetter,
-    option?: { renderTargetID?: string; isStatic?: boolean }
-) => {
+const $component = (htmlSetter: HTMLSetter) => {
     const $target = new Component({
         template: htmlSetter,
-        renderTargetID: option?.renderTargetID,
     })
-
-    if (option?.isStatic) return $target
 
     track(() => {
         $target.updateDOM()
@@ -145,4 +148,16 @@ const component = (
     return $target
 }
 
-export { signal, component, html, track }
+/**
+ * Static component class wrapper function
+ * @param htmlSetter `html` template function
+ */
+const component = (htmlSetter: HTMLSetter) => {
+    const $target = new Component({
+        template: htmlSetter,
+    })
+
+    return $target
+}
+
+export { signal, derivedSignal, $component, component, html, track }
