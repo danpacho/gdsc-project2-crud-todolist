@@ -12,6 +12,12 @@ type EventInfo = {
     targetId?: string | undefined
 }
 
+export type EventHandler = ({ target }: { target: Target }) => EventInfo
+export type EventHandlerFunction = (
+    e: HandlerEventType,
+    target?: Target
+) => void | unknown
+
 class EventListener {
     #target: Target
     #eventInfoList: EventInfo[] = []
@@ -28,7 +34,7 @@ class EventListener {
      * Add eventlistner
      * @param eventHandler returns `evntInfo` that is stored in specific component
      */
-    addEvent(eventHandler: ({ target }: { target: Target }) => EventInfo) {
+    addEvent(eventHandler: EventHandler) {
         const eventInfo = eventHandler({ target: this.#target })
         const { handler, type, name } = eventInfo
 
