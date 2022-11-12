@@ -1,4 +1,5 @@
-import { type SetterFunction, component, html, signal } from "../../core"
+import { $component, type SetterFunction, html, signal } from "../../core"
+import type { EventHandlerFunction } from "../../core/event.listener"
 import { map } from "../../core/utils"
 import { useStorage } from "../../utils/local.storage"
 import { Button } from "../atoms"
@@ -62,7 +63,37 @@ const [focusedID, setFocusedID, resetFocusedID] = signal<string | number>(
 const [input, setInput, resetInput] = signal("")
 
 const TodoListHead = () => {
-    return component(
+    const updateTodoList: EventHandlerFunction = (e, target) => {
+        e.preventDefault()
+        const text = target?.getElementsByTagName("input")[0]?.value
+        if (text) {
+            const isTodoAddMode = focusedID() === defaultFocusedValue
+            if (isTodoAddMode) {
+                setTodoListBoth((prevList) =>
+                    todoAction.add(prevList, {
+                        id: Date.now(),
+                        isCompleted: false,
+                        text,
+                    })
+                )
+                resetInput()
+            } else {
+                setTodoListBoth((prevList) =>
+                    todoAction.updateText(prevList, focusedID() as number, text)
+                )
+                resetInput()
+                resetFocusedID()
+            }
+        }
+        target?.getElementsByTagName("input")[0]?.focus()
+    }
+
+    const updateDisplay: EventHandlerFunction = (e) => {
+        const currentDisplayType = e.target.dataset.display as Display
+        setDisplay(currentDisplayType)
+    }
+
+    return $component(
         () => html`
             <form id="form" class="${style.form}">
                 <input
@@ -78,46 +109,14 @@ const TodoListHead = () => {
         `
     )
         .addEvent(({ target }) => ({
-            handler: (e) => {
-                e.preventDefault()
-                const inputTarget = target.getElementsByTagName("input")[0]
-
-                const text = inputTarget?.value
-                if (text) {
-                    const isTodoAddMode = focusedID() === defaultFocusedValue
-                    if (isTodoAddMode) {
-                        setTodoListBoth((prevList) =>
-                            todoAction.add(prevList, {
-                                id: Date.now(),
-                                isCompleted: false,
-                                text,
-                            })
-                        )
-                        resetInput()
-                    } else {
-                        setTodoListBoth((prevList) =>
-                            todoAction.updateText(
-                                prevList,
-                                focusedID() as number,
-                                text
-                            )
-                        )
-                        resetInput()
-                        resetFocusedID()
-                    }
-                }
-                target.getElementsByTagName("input")[0]?.focus()
-            },
-            type: "submit",
             targetId: "form",
+            type: "submit",
+            handler: (e) => updateTodoList(e, target),
         }))
         .addEvent(() => ({
-            handler: (e) => {
-                const currentDisplayType = e.target.dataset.display as Display
-                setDisplay(currentDisplayType)
-            },
-            type: "click",
             targetId: "display",
+            type: "click",
+            handler: updateDisplay,
         }))
 }
 
@@ -196,18 +195,19 @@ const TodoListDisplay = ({
 interface TodoListTotalStateProps {
     todoList: () => TodoList[]
 }
+const displayType: {
+    display: Display
+    text: string
+    emoji: string
+}[] = [
+    { display: "all", text: "All", emoji: "🗂️" },
+    { display: "uncompleted", text: "Do", emoji: "📚" },
+    { display: "completed", text: "Done", emoji: "🎉" },
+]
 const TodoListTotalState = ({ todoList }: TodoListTotalStateProps) => {
-    const displayType: {
-        display: Display
-        text: string
-        emoji: string
-    }[] = [
-        { display: "all", text: "All", emoji: "🗂️" },
-        { display: "uncompleted", text: "Do", emoji: "📚" },
-        { display: "completed", text: "Done", emoji: "🎉" },
-    ]
     const todoNumber = todoList().length
     const todoDoneNumber = todoList().filter((t) => t.isCompleted).length
+
     return html`
         <div class="${style.todoTotalStateContainer}">
             <div class="${style.todoStateContainer}">
@@ -228,17 +228,44 @@ const TodoListTotalState = ({ todoList }: TodoListTotalStateProps) => {
 }
 
 const TodoListRender = () => {
-    return component(() => {
-        const todoRender = () => {
-            switch (display()) {
-                case "all":
-                    return todoList()
-                case "completed":
-                    return todoList().filter((t) => t.isCompleted)
-                case "uncompleted":
-                    return todoList().filter((t) => !t.isCompleted)
-            }
+    const removeTodo: EventHandlerFunction = (e) => {
+        const id = Number(e.target.dataset.id)
+        setTodoListBoth((prevList) => todoAction.remove(prevList, id))
+    }
+
+    const updateTodoComplete: EventHandlerFunction = (e) => {
+        const id = Number(e.target.dataset.id)
+        setTodoListBoth((prevList) => todoAction.updateCompleted(prevList, id))
+    }
+
+    const updateTodoText: EventHandlerFunction = (e) => {
+        const currentId = Number(e.target.dataset.id)
+        const currentTarget = todoList().find((t) => t.id === currentId)
+        const isActionQuit = currentTarget?.id === focusedID()
+        if (isActionQuit) {
+            resetFocusedID()
+            resetInput()
+        } else {
+            setFocusedID(currentId)
+            setInput(currentTarget?.text as string)
+            const input = document.getElementsByTagName("input")[0]
+            input?.focus()
+            input?.select()
         }
+    }
+
+    const todoRender = () => {
+        switch (display()) {
+            case "all":
+                return todoList()
+            case "completed":
+                return todoList().filter((t) => t.isCompleted)
+            case "uncompleted":
+                return todoList().filter((t) => !t.isCompleted)
+        }
+    }
+
+    return $component(() => {
         return html`
             <div class="${style.listContainerCol}">
                 <div id="todo-list" class="${style.listContainer}">
@@ -253,39 +280,17 @@ const TodoListRender = () => {
         `
     })
         .addEvent(() => ({
-            handler: (e) => {
-                const id = Number(e.target.dataset.id)
-                setTodoListBoth((prevList) => todoAction.remove(prevList, id))
-            },
+            handler: removeTodo,
             type: "click",
             targetId: "remove-btn",
         }))
         .addEvent(() => ({
-            handler: (e) => {
-                const id = Number(e.target.dataset.id)
-                setTodoListBoth((prevList) =>
-                    todoAction.updateCompleted(prevList, id)
-                )
-            },
+            handler: updateTodoComplete,
             type: "click",
             targetId: "update-completed-btn",
         }))
         .addEvent(() => ({
-            handler: (e) => {
-                const currentId = Number(e.target.dataset.id)
-                const currentTarget = todoList().find((t) => t.id === currentId)
-                const isActionQuit = currentTarget?.id === focusedID()
-                if (isActionQuit) {
-                    resetFocusedID()
-                    resetInput()
-                } else {
-                    setFocusedID(currentId)
-                    setInput(currentTarget?.text as string)
-                    const input = document.getElementsByTagName("input")[0]
-                    input?.focus()
-                    input?.select()
-                }
-            },
+            handler: updateTodoText,
             type: "click",
             targetId: "update-text-btn",
         }))
