@@ -9,12 +9,9 @@ const App = () =>
                 <div id="todo-list-head" class="${style.headContainer}"></div>
                 <div id="todo-list-render" class="${style.listContainer}"></div>
             </div>
-        `,
-        {
-            isStatic: true,
-        }
+        `
     )
-App().staticRender()
+App().render()
 
 TodoListHead().render("todo-list-head")
 TodoListRender().render("todo-list-render")
